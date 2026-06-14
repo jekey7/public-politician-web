@@ -12,9 +12,10 @@ import type { PoliticianProfile, PublicSnapshot } from "./types";
  * (fs.readFileSync + process.cwd() 방식은 Vercel 정적 빌드에서 경로를 찾지 못해 mock으로 폴백되는 문제가 있었음)
  */
 
-// 정적 import — 번들러가 빌드 시 포함, Vercel 정적 빌드에서도 경로 문제 없음.
-import snapshotJson from "../../public/snapshots/latest.json";
-import coverageJson from "../../public/snapshots/latest-coverage.json";
+// 정적 import — src/data/ 기준 경로로 번들러가 빌드 시 포함.
+// public/ 상대 경로는 Vercel 빌드에서 resolve 실패 사례가 있어 src/ 안으로 복사해 사용.
+import snapshotJson from "../data/snapshot.json";
+import coverageJson from "../data/snapshot-coverage.json";
 
 export type ProfileSourceKind = "snapshot" | "mock";
 
