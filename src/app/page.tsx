@@ -12,7 +12,8 @@ export default function HomePage() {
       <section className="hero-grid">
         <div>
           <p className="eyebrow">PUBLIC SNAPSHOT / SOURCE-FIRST</p>
-          <h1>대한민국 국회의원 공개정보를 출처별로 대조합니다.</h1>
+          <h1>대한민국 국회의원 정보 플랫폼</h1>
+          <p className="hero-subtitle">국회의원의 공개 정보를 여러 공식 출처에서 모아 한눈에 확인할 수 있습니다.<br />출처마다 내용이 다를 경우 하나로 합치지 않고, 있는 그대로 나란히 보여드립니다.</p>
         </div>
         <div className="hero-panel">
           <p>
