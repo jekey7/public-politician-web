@@ -1,0 +1,122 @@
+{
+  "$schema_note": "Version-controlled measurement fixtures for the local-LLM cross-verification harness (scripts/measure-llm.ts). Each case is a HUMAN-AUTHORED expected label used to MEASURE classification/matching quality. The harness never treats LLM output as a fact source (invariant #1) — these expected labels are the ground truth the LLM is scored against. The synonym judgments below are surface-form/structural equivalences in the same domain (Korean education/career wording), NOT factual claims about any real person; all values are illustrative.",
+  "schema_version": "1.0.0",
+  "entity_match_cases": [
+    {
+      "id": "match-canonical-econ-degree",
+      "kind": "entity_match",
+      "valueA": "○○대학교 경제학과 졸업",
+      "valueB": "○○대학교 경제학 학사",
+      "expectedSameEntity": true,
+      "category": "synonym",
+      "note": "Canonical synonym gap from DOCUMENT.md §7. '경제학과 졸업'(graduated from the economics department) and '경제학 학사'(bachelor's in economics) are the same education entity in different surface forms. The substring rule matcher misses this because neither string contains the other. Judgment source: 학사 학위 is the degree conferred by 졸업 from a 학과; same field (경제학)."
+    },
+    {
+      "id": "match-law-degree",
+      "kind": "entity_match",
+      "valueA": "□□대 법학과 졸업",
+      "valueB": "□□대 법학 학사 학위 취득",
+      "expectedSameEntity": true,
+      "category": "synonym",
+      "note": "Same as the canonical case in the law domain. '법학과 졸업' vs '법학 학사 학위 취득' — graduating the law department yields a bachelor of laws. Judgment source: 학사 학위 취득 == 졸업 outcome for the same 학과."
+    },
+    {
+      "id": "match-grad-school-abbrev",
+      "kind": "entity_match",
+      "valueA": "△△대학교 행정대학원 석사",
+      "valueB": "△△대 행정대학원 행정학 석사 졸업",
+      "expectedSameEntity": true,
+      "category": "synonym",
+      "note": "Abbreviation + added field name for the same graduate degree. '△△대학교'≈'△△대' (university abbreviation) and the second adds the explicit major (행정학) plus 졸업. Judgment source: same institution + same graduate school (행정대학원) + same degree level (석사)."
+    },
+    {
+      "id": "match-career-title-variant",
+      "kind": "entity_match",
+      "valueA": "제20대 국회의원",
+      "valueB": "20대 국회의원 (재선)",
+      "expectedSameEntity": true,
+      "category": "synonym",
+      "note": "Ordinal notation variant for the same career line. '제20대' vs '20대' is a notation difference; '(재선)' is supplementary context, not a different office. Judgment source: identical office and term number, prefix '제' is optional in Korean ordinal usage."
+    },
+    {
+      "id": "match-company-suffix",
+      "kind": "entity_match",
+      "valueA": "◇◇전자 대표이사",
+      "valueB": "주식회사 ◇◇전자 대표이사 사장",
+      "expectedSameEntity": true,
+      "category": "synonym",
+      "note": "Legal-form prefix '주식회사' and title elaboration '사장' around the same role. Judgment source: '대표이사' == '대표이사 사장' (사장 is the common title attached to 대표이사); '주식회사 ◇◇전자' is the formal name of '◇◇전자'."
+    },
+    {
+      "id": "match-major-spacing",
+      "kind": "entity_match",
+      "valueA": "▽▽대학교 정치외교학과",
+      "valueB": "▽▽대학교 정치 외교학과",
+      "expectedSameEntity": true,
+      "category": "synonym",
+      "note": "Pure spacing (띄어쓰기) variance — '정치외교학과' vs '정치 외교학과'. Judgment source: identical characters modulo whitespace; same single department (정치외교학과). This one the substring/normalize rule SHOULD already get; included to confirm the LLM does not regress on easy cases."
+    }
+  ],
+  "classification_cases": [
+    {
+      "id": "classify-notation-econ",
+      "kind": "classification",
+      "field": "education",
+      "evidences": [
+        { "sourceOrg": "열린국회정보", "rawText": "○○대학교 경제학과 졸업" },
+        { "sourceOrg": "헌정회", "rawText": "○○대학교 경제학 학사" }
+      ],
+      "expectedKind": "notation_variance",
+      "category": "synonym",
+      "note": "Same education entity, different surface form → notation_variance (not a conflict). This is the discrimination the project depends on: the model must call this 'same entity, different wording', NOT content_conflict. Judgment source: see match-canonical-econ-degree."
+    },
+    {
+      "id": "classify-conflict-econ-vs-biz",
+      "kind": "classification",
+      "field": "education",
+      "evidences": [
+        { "sourceOrg": "열린국회정보", "rawText": "○○대학교 경제학과 졸업" },
+        { "sourceOrg": "언론 인물DB", "rawText": "○○대학교 경영학과 졸업" }
+      ],
+      "expectedKind": "content_conflict",
+      "category": "content_conflict",
+      "note": "GENUINE conflict from DOCUMENT.md §7: 경제학과(economics) vs 경영학과(business administration) are DIFFERENT departments. The model must NOT collapse this into notation_variance. Judgment source: 경제학 and 경영학 are distinct academic disciplines."
+    },
+    {
+      "id": "classify-conflict-birthyear",
+      "kind": "classification",
+      "field": "birthYear",
+      "evidences": [
+        { "sourceOrg": "열린국회정보", "rawText": "1965년생" },
+        { "sourceOrg": "중앙선거관리위원회", "rawText": "1966년생" }
+      ],
+      "expectedKind": "content_conflict",
+      "category": "content_conflict",
+      "note": "Conflicting factual values for the same field — 1965 vs 1966. Two sources assert different birth years. Judgment source: different scalar values for an unambiguous field; surfaced as conflict, never merged (invariant #4)."
+    },
+    {
+      "id": "classify-conflict-district",
+      "kind": "classification",
+      "field": "district",
+      "evidences": [
+        { "sourceOrg": "열린국회정보", "rawText": "서울 종로구" },
+        { "sourceOrg": "언론 인물DB", "rawText": "서울 중구성동구갑" }
+      ],
+      "expectedKind": "content_conflict",
+      "category": "content_conflict",
+      "note": "Different electoral districts → content_conflict. 종로구 and 중구성동구갑 are different constituencies. Judgment source: distinct district identifiers."
+    },
+    {
+      "id": "classify-notation-district-spacing",
+      "kind": "classification",
+      "field": "district",
+      "evidences": [
+        { "sourceOrg": "열린국회정보", "rawText": "부산 해운대구갑" },
+        { "sourceOrg": "헌정회", "rawText": "부산광역시 해운대구 갑" }
+      ],
+      "expectedKind": "notation_variance",
+      "category": "synonym",
+      "note": "Same district, different notation — '부산'≈'부산광역시', spacing of '해운대구갑' vs '해운대구 갑'. Judgment source: identical constituency with administrative-name expansion and spacing only."
+    }
+  ]
+}

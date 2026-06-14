@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-06-14T13:26:51.977Z",
+  "snapshot_schema": "schema.json",
+  "files": [
+    {
+      "path": "latest.json",
+      "bytes": 2249700,
+      "sha256": "ac81ac7b9cc9325a3c9be77771d4e13d5c8244709fad7fd1ec5672a32d017301"
+    },
+    {
+      "path": "facts.csv",
+      "bytes": 1211070,
+      "sha256": "f40b8fc2f8f434d33be38503517b9224c6236fe4aee6ceab9a21a4cbc4a48ba0"
+    },
+    {
+      "path": "latest-coverage.json",
+      "bytes": 7179,
+      "sha256": "3ee4942c1916dcce21ece5f8adb42a4fda899f492beaf510844d901e6cd35883"
+    },
+    {
+      "path": "schema.json",
+      "bytes": 4803,
+      "sha256": "90f3db42420cc92fa872446b7096fcef6202c640b91d2fee3fb1c094e353e4b5"
+    }
+  ],
+  "counts": {
+    "facts": 2764,
+    "discrepancies": 243,
+    "news_items": 0
+  },
+  "notes": [
+    "Manifest checksums cover public snapshot artifacts only.",
+    "Internal raw archives are intentionally excluded from public release artifacts."
+  ]
+}

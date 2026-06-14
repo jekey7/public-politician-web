@@ -1,0 +1,630 @@
+/*
+ * Design language: Apple-style (see DESIGN.md).
+ * Photography-first museum gallery: light/parchment ↔ near-black tiles, a single
+ * Action Blue accent, SF Pro typography (system-ui → Inter substitute), negative
+ * tracking at display sizes, exactly one product shadow. UI chrome recedes.
+ *
+ * Chapter 0 note: emphasis (discrepancies, warnings) is carried by SURFACE
+ * ALTERNATION (dark tile), never by a second accent color — "alternate surface
+ * before adding chrome" (DESIGN.md). Blue is the only interactive color.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Brand & accent */
+  --primary: #0066cc;
+  --primary-focus: #0071e3;
+  --primary-on-dark: #2997ff;
+
+  /* Surface */
+  --canvas: #ffffff;
+  --canvas-parchment: #f5f5f7;
+  --surface-pearl: #fafafc;
+  --surface-tile-1: #272729;
+  --surface-tile-2: #2a2a2c;
+  --surface-tile-3: #252527;
+  --surface-black: #000000;
+
+  /* Text */
+  --ink: #1d1d1f;
+  --on-dark: #ffffff;
+  --body-muted: #cccccc;
+  --ink-muted-80: #333333;
+  --ink-muted-48: #7a7a7a;
+
+  /* Hairlines */
+  --divider-soft: #f0f0f0;
+  --hairline: #e0e0e0;
+
+  /* The single drop-shadow in the system, reserved for resting imagery/figures. */
+  --product-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0;
+
+  --font-display: "SF Pro Display", system-ui, -apple-system, "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "SF Pro Text", system-ui, -apple-system, "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--canvas-parchment);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.374px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: opacity 150ms ease;
+}
+
+a:hover {
+  opacity: 0.7;
+}
+
+/* ───────────────────────── Global nav (slim black bar) ───────────────────── */
+
+.site-header {
+  align-items: center;
+  background: var(--surface-black);
+  color: var(--on-dark);
+  display: flex;
+  gap: 32px;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.wordmark {
+  color: var(--on-dark);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.374px;
+}
+
+.wordmark:hover {
+  opacity: 0.85;
+}
+
+.top-nav {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.top-nav a {
+  color: var(--on-dark);
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: -0.12px;
+}
+
+/* ───────────────────────── Eyebrows / labels (caption) ───────────────────── */
+/* Apple has no mono/uppercase chrome; labels read as quiet captions in ink. */
+
+.eyebrow,
+.section-label,
+.kicker,
+.field-label,
+.rail-time,
+.pill,
+.news-card span,
+label span {
+  color: var(--ink-muted-48);
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.224px;
+  line-height: 1.29;
+}
+
+/* ───────────────────────── Page shell & headings ─────────────────────────── */
+
+.page-shell {
+  background: var(--canvas-parchment);
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: 80px 24px;
+}
+
+h1 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(34px, 6vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.28px;
+  line-height: 1.07;
+  margin: 12px 0 0;
+  max-width: 960px;
+}
+
+h2,
+p {
+  margin-top: 0;
+}
+
+/* ───────────────────────── Hero ──────────────────────────────────────────── */
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 32px;
+  margin-bottom: 80px;
+}
+
+.hero-panel {
+  align-self: end;
+  color: var(--ink-muted-80);
+  line-height: 1.47;
+}
+
+/* ───────────────────────── Buttons ───────────────────────────────────────── */
+/* Signature Action Blue pill. The full-pill radius IS the action signal. */
+
+.primary-button {
+  background: var(--primary);
+  border: 0;
+  border-radius: 9999px;
+  color: var(--on-dark);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-text);
+  font-size: 17px;
+  font-weight: 400;
+  justify-content: center;
+  letter-spacing: -0.374px;
+  margin-top: 24px;
+  padding: 11px 22px;
+  transition: transform 100ms ease;
+}
+
+.primary-button:hover {
+  opacity: 0.92;
+}
+
+.primary-button:active {
+  transform: scale(0.95);
+}
+
+.primary-button:focus-visible {
+  outline: 2px solid var(--primary-focus);
+  outline-offset: 2px;
+}
+
+/* ───────────────────────── Filter / form strips ──────────────────────────── */
+
+.filter-strip,
+.qa-form {
+  align-items: end;
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  display: grid;
+  gap: 17px;
+  grid-template-columns: 2fr repeat(3, 1fr);
+  margin-bottom: 80px;
+  padding: 24px;
+}
+
+.qa-form {
+  grid-template-columns: 1fr auto;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+}
+
+/* Pill search input — search shares the CTA pill grammar. */
+input,
+select {
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  color: var(--ink);
+  font: inherit;
+  letter-spacing: -0.374px;
+  min-height: 44px;
+  padding: 12px 20px;
+}
+
+input:focus-visible,
+select:focus-visible {
+  border-color: var(--primary-focus);
+  outline: 2px solid var(--primary-focus);
+  outline-offset: 1px;
+}
+
+/* ───────────────────────── Result stream ─────────────────────────────────── */
+
+.stream-section {
+  margin-top: 80px;
+}
+
+.search-gate {
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  margin: 80px 0;
+  padding: 24px;
+}
+
+.search-gate p:last-child {
+  color: var(--ink-muted-80);
+  font-size: 21px;
+  letter-spacing: -0.231px;
+  line-height: 1.38;
+  margin-bottom: 0;
+}
+
+.story-stream {
+  display: grid;
+  gap: 24px;
+}
+
+/* Light utility card — flat, hairline, 18px radius, no shadow on chrome. */
+.result-card {
+  align-items: start;
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 140px 1fr;
+  padding: 24px;
+}
+
+/* Emphasis through surface alternation, not a second color (DESIGN.md). */
+.accent-card {
+  background: var(--surface-tile-1);
+  border-color: var(--surface-tile-1);
+  color: var(--on-dark);
+}
+
+.accent-card a {
+  color: var(--primary-on-dark);
+}
+
+.accent-card .kicker,
+.accent-card .rail-time,
+.accent-card .deck {
+  color: var(--body-muted);
+}
+
+.warning-card {
+  background: var(--surface-tile-2);
+  border-color: var(--surface-tile-2);
+  color: var(--on-dark);
+}
+
+.warning-card .kicker,
+.warning-card .rail-time {
+  color: var(--body-muted);
+}
+
+/* ── 보류(ambiguous-withheld) 상태 — 검증됨/검수중 어느 쪽과도 시각적으로 구분되는 호박색 경고 ──
+   불일치(어두운 warning-card)와도 다르게, 밝은 배경 + 호박색 테두리/라벨로 "식별 불가·보류"를 정직히 표시. */
+.withheld-card {
+  background: #fff8ec;
+  border: 1px solid #e0a32e;
+  border-radius: 18px;
+  color: var(--ink);
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+}
+
+.withheld-card .rail-time {
+  color: #8a5a00;
+  font-weight: 600;
+}
+
+.withheld-card h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.withheld-card p {
+  color: var(--ink-muted-80);
+  line-height: 1.5;
+}
+
+.withheld-card .withheld-reason {
+  color: #8a5a00;
+  font-weight: 600;
+}
+
+.result-card h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.374px;
+  line-height: 1.14;
+  margin: 6px 0 12px;
+}
+
+.accent-card h2 a {
+  color: var(--on-dark);
+}
+
+.deck,
+.empty-state {
+  color: var(--ink-muted-80);
+  line-height: 1.47;
+}
+
+/* ───────────────────────── Politician detail ─────────────────────────────── */
+
+.detail-hero {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 32px;
+  margin: 24px 0 80px;
+}
+
+.back-link {
+  color: var(--primary);
+  font-family: var(--font-text);
+  font-size: 14px;
+  letter-spacing: -0.224px;
+}
+
+/* Discrepancy count — a dark tile resting figure with the single product shadow. */
+.discrepancy-tile {
+  align-self: end;
+  background: var(--surface-tile-1);
+  border-radius: 18px;
+  box-shadow: var(--product-shadow);
+  color: var(--on-dark);
+  padding: 24px;
+}
+
+.discrepancy-tile .pill {
+  color: var(--body-muted);
+}
+
+.discrepancy-tile strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.28px;
+  line-height: 1.07;
+  margin-top: 12px;
+}
+
+.discrepancy-tile p {
+  color: var(--body-muted);
+  margin-top: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fact-card {
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.fact-card h2 {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.231px;
+  line-height: 1.19;
+  margin-bottom: 17px;
+}
+
+.fact-card ul {
+  display: grid;
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fact-card li {
+  border-top: 1px solid var(--divider-soft);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr auto;
+  padding-top: 14px;
+}
+
+.fact-card strong,
+.news-card strong,
+.citation-list strong,
+.evidence-list strong {
+  display: block;
+  font-weight: 600;
+  line-height: 1.24;
+}
+
+.fact-card p {
+  color: var(--ink-muted-48);
+  font-size: 14px;
+  letter-spacing: -0.224px;
+  line-height: 1.43;
+  margin: 6px 0 0;
+}
+
+.fact-card a {
+  color: var(--primary);
+  font-size: 14px;
+  letter-spacing: -0.224px;
+}
+
+/* ───────────────────────── News & citation grids ─────────────────────────── */
+
+.news-grid,
+.citation-list,
+.evidence-list {
+  display: grid;
+  gap: 17px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.news-card,
+.citation-list a,
+.evidence-list a {
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+}
+
+/* On dark warning tiles the embedded evidence cards invert to read clearly. */
+.warning-card .evidence-list a {
+  background: var(--surface-tile-3);
+  border-color: var(--surface-tile-3);
+  color: var(--on-dark);
+}
+
+.warning-card .evidence-list a span {
+  color: var(--body-muted);
+}
+
+.warning-card .evidence-list a small {
+  color: var(--body-muted);
+}
+
+.qa-page .hero-grid {
+  align-items: stretch;
+}
+
+.answer-panel {
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.answer-panel h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.374px;
+  line-height: 1.14;
+}
+
+.citation-list {
+  margin-top: 24px;
+}
+
+.citation-list span,
+.evidence-list span {
+  color: var(--ink-muted-48);
+  font-family: var(--font-text);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.224px;
+}
+
+.citation-list small,
+.evidence-list small,
+.news-card small {
+  color: var(--ink-muted-48);
+  font-family: var(--font-text);
+  font-size: 12px;
+  letter-spacing: -0.12px;
+  line-height: 1.3;
+}
+
+.evidence-list {
+  grid-template-columns: 1fr;
+  margin-top: 16px;
+}
+
+/* ───────────────────────── Footer (parchment, dense) ─────────────────────── */
+
+.site-footer {
+  background: var(--canvas-parchment);
+  border-top: 1px solid var(--hairline);
+  color: var(--ink-muted-80);
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr auto;
+  padding: 64px 24px;
+}
+
+.site-footer p {
+  line-height: 1.47;
+  margin-bottom: 0;
+}
+
+.site-footer nav {
+  align-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.site-footer a {
+  color: var(--primary);
+  font-family: var(--font-text);
+  font-size: 14px;
+  letter-spacing: -0.224px;
+  padding: 8px 0;
+}
+
+/* ───────────────────────── Responsive ────────────────────────────────────── */
+
+@media (max-width: 833px) {
+  .page-shell {
+    padding: 48px 24px;
+  }
+
+  .hero-grid,
+  .filter-strip,
+  .qa-form,
+  .detail-hero,
+  .detail-grid,
+  .news-grid,
+  .citation-list,
+  .site-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer nav {
+    justify-content: flex-start;
+  }
+
+  .result-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-shell {
+    padding: 48px 16px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+}

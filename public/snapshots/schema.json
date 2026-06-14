@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/public-snapshot.schema.json",
+  "title": "Public Politician Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "assumptions", "verified_facts", "discrepancies", "news_feed"],
+  "properties": {
+    "schema_version": { "const": "0.1.0" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "verified_facts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fact" }
+    },
+    "discrepancies": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/discrepancy" }
+    },
+    "news_feed": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/news" }
+    }
+  },
+  "$defs": {
+    "source_kind": {
+      "enum": ["open_assembly", "public_data_portal", "rokps", "nec", "news_search", "rss", "manual_review", "mock"]
+    },
+    "review_status": {
+      "enum": ["verified", "reviewing"]
+    },
+    "fact_category": {
+      "enum": ["identity", "education", "career", "party_history", "election", "bill", "vote", "committee"]
+    },
+    "discrepancy_kind": {
+      "enum": ["notation_variance", "content_conflict", "missing_from_source"]
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "politician_id",
+        "display_name",
+        "category",
+        "field",
+        "value",
+        "raw_text",
+        "review_status",
+        "evidence_id",
+        "source_id",
+        "source_kind",
+        "source_org",
+        "source_url",
+        "fetched_at",
+        "license_note"
+      ],
+      "properties": {
+        "politician_id": { "type": "string", "minLength": 1 },
+        "display_name": { "type": "string", "minLength": 1 },
+        "category": { "$ref": "#/$defs/fact_category" },
+        "field": { "type": "string", "minLength": 1 },
+        "value": { "type": ["string", "number", "boolean"] },
+        "raw_text": { "type": "string", "minLength": 1 },
+        "review_status": { "$ref": "#/$defs/review_status" },
+        "evidence_id": { "type": "string", "minLength": 1 },
+        "source_id": { "type": "string", "minLength": 1 },
+        "source_kind": { "$ref": "#/$defs/source_kind" },
+        "source_org": { "type": "string", "minLength": 1 },
+        "source_url": { "type": "string", "minLength": 1 },
+        "fetched_at": { "type": "string", "minLength": 1 },
+        "license_note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "discrepancy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discrepancy_id",
+        "politician_id",
+        "display_name",
+        "category",
+        "field",
+        "kind",
+        "label",
+        "evidence_ids",
+        "detected_at",
+        "detector"
+      ],
+      "properties": {
+        "discrepancy_id": { "type": "string", "minLength": 1 },
+        "politician_id": { "type": "string", "minLength": 1 },
+        "display_name": { "type": "string", "minLength": 1 },
+        "category": { "$ref": "#/$defs/fact_category" },
+        "field": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/discrepancy_kind" },
+        "label": { "type": "string", "minLength": 1 },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "detected_at": { "type": "string", "minLength": 1 },
+        "detector": { "enum": ["rule", "llm_interface", "llm_interface_low_confidence"] }
+      }
+    },
+    "news": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "news_id",
+        "politician_id",
+        "title",
+        "publisher",
+        "published_at",
+        "media_kind",
+        "source_id",
+        "source_kind",
+        "source_org",
+        "source_url",
+        "fetched_at",
+        "license_note"
+      ],
+      "properties": {
+        "news_id": { "type": "string", "minLength": 1 },
+        "politician_id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "publisher": { "type": "string", "minLength": 1 },
+        "published_at": { "type": "string", "minLength": 1 },
+        "media_kind": { "enum": ["article", "video"] },
+        "source_id": { "type": "string", "minLength": 1 },
+        "source_kind": { "$ref": "#/$defs/source_kind" },
+        "source_org": { "type": "string", "minLength": 1 },
+        "source_url": { "type": "string", "minLength": 1 },
+        "fetched_at": { "type": "string", "minLength": 1 },
+        "license_note": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

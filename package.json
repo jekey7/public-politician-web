@@ -1,0 +1,52 @@
+{
+  "name": "public-politician-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "eslint .",
+    "snapshot": "tsx scripts/generate-snapshot.ts",
+    "snapshot:mock": "tsx scripts/generate-snapshot.ts --mock",
+    "measure:llm": "tsx scripts/measure-llm.ts",
+    "measure:llm:batch": "tsx scripts/measure-llm-batch.ts",
+    "measure:voting-stability": "tsx scripts/measure-voting-stability.ts",
+    "dry-run:open-assembly-live": "tsx scripts/dry-run-open-assembly-live.ts",
+    "dry-run:nec-live": "tsx scripts/dry-run-nec-cross-verification-live.ts",
+    "nec:normalize-classify": "tsx scripts/nec-normalization-classify.ts",
+    "verify:ui": "tsx scripts/verify-ui.ts",
+    "verify:a11y": "tsx scripts/verify-a11y.ts",
+    "verify:dependency-licenses": "tsx scripts/verify-dependency-licenses.ts",
+    "verify:design": "tsx scripts/verify-design.ts",
+    "verify:public-boundary": "tsx scripts/verify-public-boundary.ts",
+    "verify:public-pipeline": "tsx scripts/verify-public-pipeline.ts",
+    "verify:open-assembly-fixture": "tsx scripts/verify-open-assembly-fixture.ts",
+    "verify:source-review-dossiers": "tsx scripts/verify-source-review-dossiers.ts",
+    "verify:source-licenses": "tsx scripts/verify-source-licenses.ts",
+    "verify:snapshot": "tsx scripts/verify-snapshot.ts",
+    "verify:all": "npm run snapshot:mock && npm run build && npm run verify:snapshot && npm run verify:source-review-dossiers && npm run verify:source-licenses && npm run verify:dependency-licenses && npm run verify:public-pipeline && npm run verify:open-assembly-fixture && npm run verify:ui && npm run verify:a11y && npm run verify:design && npm run verify:public-boundary && npm test && npm run lint",
+    "audit:moderate": "npm audit --audit-level=moderate",
+    "verify:release": "npm run verify:all && npm run audit:moderate",
+    "test": "npm run typecheck && tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.28.0",
+    "eslint-config-next": "^15.3.0",
+    "jsdom": "^29.1.1",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0"
+  }
+}
