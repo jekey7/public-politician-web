@@ -36,8 +36,9 @@ function verifyIndex(html: string) {
   }
   for (const requiredText of [
     "PUBLIC DATA",
-    "SEARCH TEMPORARILY UNAVAILABLE",
-    "검색 기능은 현재 개발 중이며, 복구되는 대로 제공할 예정입니다.",
+    "DATA RELEASED / SEARCH UI PAUSED",
+    "공개 데이터 산출물은 배포되어 있습니다.",
+    "열린국회정보 기반 공개 스냅샷 산출물입니다.",
   ]) {
     if (!html.includes(requiredText)) errors.push(`index is missing ${requiredText}`);
   }

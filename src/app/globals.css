@@ -264,12 +264,56 @@ select:focus-visible {
   padding: 24px;
 }
 
-.search-gate p:last-child {
+.release-notice {
   color: var(--ink-muted-80);
   font-size: 21px;
   letter-spacing: -0.231px;
   line-height: 1.38;
   margin-bottom: 0;
+}
+
+.release-summary {
+  border-top: 1px solid var(--divider-soft);
+  display: grid;
+  gap: 17px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 24px 0 0;
+  padding-top: 24px;
+}
+
+.release-summary div {
+  display: grid;
+  gap: 6px;
+}
+
+.release-summary dt {
+  color: var(--ink-muted-48);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.12px;
+}
+
+.release-summary dd {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.374px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.release-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.release-links a {
+  color: var(--primary);
+  font-size: 14px;
+  letter-spacing: -0.224px;
 }
 
 .story-stream {

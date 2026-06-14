@@ -9,8 +9,11 @@ test("home search is gated with an honest interim notice", async () => {
   const { container, root, dom } = await renderHomeSearch();
 
   try {
-    assertIncludes(container, "SEARCH TEMPORARILY UNAVAILABLE");
-    assertIncludes(container, "검색 기능은 현재 개발 중이며, 복구되는 대로 제공할 예정입니다.");
+    assertIncludes(container, "DATA RELEASED / SEARCH UI PAUSED");
+    assertIncludes(container, "공개 데이터 산출물은 배포되어 있습니다.");
+    assertIncludes(container, "FACTS");
+    assertIncludes(container, "DISCREPANCIES");
+    assertIncludes(container, "LATEST JSON");
     assert.equal(container.querySelector("input"), null);
     assert.equal(container.querySelector("select"), null);
     assertDoesNotInclude(container, "김공개");

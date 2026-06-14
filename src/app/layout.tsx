@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { publicArtifactLinks } from "@/lib/public-artifacts";
+import { publicReleaseSummary } from "@/lib/public-release";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <nav className="top-nav" aria-label="주요 메뉴">
             <Link href="/">SEARCH</Link>
             <Link href="/qa">RAG Q&A</Link>
-            <a href="https://github.com/" rel="noreferrer" target="_blank">
+            <a href="https://github.com/jekey7/public-politician-web" rel="noreferrer" target="_blank">
               OPEN SOURCE
             </a>
           </nav>
@@ -28,7 +29,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <footer className="site-footer">
           <div>
             <p className="section-label">PUBLIC DATA</p>
-            <p>목 데이터 기준 공개 스냅샷 산출물입니다. 실제 데이터 릴리스 전까지 사실로 해석하지 마세요.</p>
+            <p>
+              열린국회정보 기반 공개 스냅샷 산출물입니다. 사실 {publicReleaseSummary.facts.toLocaleString("ko-KR")}건,
+              불일치 {publicReleaseSummary.discrepancies.toLocaleString("ko-KR")}건을 출처 메타데이터와 함께 제공합니다.
+            </p>
           </div>
           <nav aria-label="공개 데이터 링크">
             {publicArtifactLinks.map((link) => (
