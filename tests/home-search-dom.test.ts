@@ -2,28 +2,47 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { JSDOM } from "jsdom";
 import type { Root } from "react-dom/client";
+import type { PoliticianSummary } from "../src/lib/politician-summary";
 
 let reactAct: typeof import("react").act;
 
-test("home search is gated with an honest interim notice", async () => {
-  const { container, root, dom } = await renderHomeSearch();
+const SAMPLE_POLITICIANS: PoliticianSummary[] = [
+  { politicianId: "p1", displayName: "김공개", party: "민주당", district: "서울 종로구", discrepancyCount: 2 },
+  { politicianId: "p2", displayName: "이투명", party: "국민의힘", district: "경기 수원갑", discrepancyCount: 0 },
+];
+
+test("home search renders politician list with filter controls", async () => {
+  const { container, root, dom } = await renderHomeSearch(SAMPLE_POLITICIANS);
 
   try {
-    assertIncludes(container, "DATA RELEASED / SEARCH UI PAUSED");
-    assertIncludes(container, "공개 데이터 산출물은 배포되어 있습니다.");
-    assertIncludes(container, "FACTS");
-    assertIncludes(container, "DISCREPANCIES");
-    assertIncludes(container, "LATEST JSON");
-    assert.equal(container.querySelector("input"), null);
-    assert.equal(container.querySelector("select"), null);
-    assertDoesNotInclude(container, "김공개");
+    assert.ok(container.querySelector("input"), "검색 input이 있어야 합니다");
+    assert.ok(container.querySelector("select"), "정당 select가 있어야 합니다");
+    assertIncludes(container, "김공개");
+    assertIncludes(container, "이투명");
+    assertIncludes(container, "민주당");
+    assertIncludes(container, "국민의힘");
+    assertIncludes(container, "2 불일치");
+    assertIncludes(container, "2명");
+  } finally {
+    await cleanup(root, dom);
+  }
+});
+
+test("home search filters by query", async () => {
+  const { container, root, dom } = await renderHomeSearch(SAMPLE_POLITICIANS);
+
+  try {
+    const input = container.querySelector("input") as HTMLInputElement;
+    assert.ok(input);
+    await setInputValue(input, dom, "김공개");
+    assertIncludes(container, "김공개");
     assertDoesNotInclude(container, "이투명");
   } finally {
     await cleanup(root, dom);
   }
 });
 
-async function renderHomeSearch() {
+async function renderHomeSearch(politicians: PoliticianSummary[]) {
   const dom = new JSDOM("<!doctype html><html><body><main id=\"root\"></main></body></html>", {
     url: "https://example.invalid/",
   });
@@ -32,7 +51,7 @@ async function renderHomeSearch() {
   const container = dom.window.document.getElementById("root");
   assert.ok(container);
 
-  const [{ act, createElement }, { createRoot }, { HomeSearch }] = await Promise.all([
+  const [{ act, createElement }, { createRoot }, { HomeSearchClient }] = await Promise.all([
     import("react"),
     import("react-dom/client"),
     import("../src/app/home-search"),
@@ -41,10 +60,19 @@ async function renderHomeSearch() {
 
   const root = createRoot(container);
   await act(async () => {
-    root.render(createElement(HomeSearch));
+    root.render(createElement(HomeSearchClient, { politicians }));
   });
 
   return { container, root, dom };
+}
+
+async function setInputValue(input: HTMLInputElement, dom: JSDOM, value: string) {
+  await reactAct(async () => {
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")?.set;
+    nativeInputValueSetter?.call(input, value);
+    input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+    input.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+  });
 }
 
 function defineDomGlobals(dom: JSDOM) {
@@ -85,9 +113,9 @@ async function cleanup(root: Root, dom: JSDOM) {
 }
 
 function assertIncludes(container: HTMLElement, text: string) {
-  assert.ok(container.textContent?.includes(text), `expected rendered text to include ${text}`);
+  assert.ok(container.textContent?.includes(text), `expected rendered text to include "${text}"`);
 }
 
 function assertDoesNotInclude(container: HTMLElement, text: string) {
-  assert.equal(container.textContent?.includes(text), false, `expected rendered text not to include ${text}`);
+  assert.equal(container.textContent?.includes(text), false, `expected rendered text not to include "${text}"`);
 }

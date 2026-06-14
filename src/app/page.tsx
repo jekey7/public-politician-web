@@ -1,7 +1,12 @@
 import Link from "next/link";
-import { HomeSearch } from "./home-search";
+import { getProfiles } from "@/lib/profile-source";
+import { profileToSummary } from "@/lib/politician-summary";
+import { HomeSearchClient } from "./home-search";
 
 export default function HomePage() {
+  const profiles = getProfiles();
+  const politicians = profiles.map(profileToSummary);
+
   return (
     <main className="page-shell">
       <section className="hero-grid">
@@ -20,7 +25,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <HomeSearch />
+      <HomeSearchClient politicians={politicians} />
     </main>
   );
 }
